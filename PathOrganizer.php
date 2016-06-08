@@ -27,20 +27,6 @@ class PathOrganizer extends ActiveRecord
         return Yii::$app->pathManager->pathTable;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            [
-                'class' => TimestampBehavior::className(),
-                'createdAtAttribute' => 'created',
-                'updatedAtAttribute' => 'updated',
-                'value' => new Expression('NOW()'),
-            ],
-        ];
-    }
 
     /**
      * @inheritdoc

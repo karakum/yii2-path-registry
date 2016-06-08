@@ -35,8 +35,8 @@ class m160606_163120_path_organizer_init extends Migration
             'namespace' => $this->string(32)->notNull(),
             'path' => $this->string(100)->notNull(),
             'size' => $this->integer()->notNull()->defaultValue(0),
-            'created' => $this->timestamp()->notNull(),
-            'updated' => $this->timestamp()->notNull(),
+            'created' => $this->timestamp()->defaultExpression('CURRENT_TIMESTAMP'),
+            'updated' => 'TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP',
         ], $tableOptions);
         $this->createIndex('idx-path_organizer-unique-namespace-path', $pathManager->pathTable, ['namespace', 'path'], true);
 
