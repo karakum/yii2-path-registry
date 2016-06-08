@@ -57,6 +57,16 @@ class PathOrganizer extends ActiveRecord
         ];
     }
 
+    public function getBasePath($name = false)
+    {
+        return Yii::$app->pathManager->getBasePath($this->namespace) . ($name ? '/' . $name : '');
+    }
+
+    public function getBaseUrl($name = false)
+    {
+        return Yii::$app->pathManager->getBaseUrl($this->namespace) . ($name ? '/' . $name : '');
+    }
+
     public function getFullPath($name = false)
     {
         return Yii::$app->pathManager->getBasePath($this->namespace) . '/' . $this->path . ($name ? '/' . $name : '');
