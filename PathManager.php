@@ -128,19 +128,22 @@ class PathManager extends Component
             while ($newFolders && $tryCnt) {
 
                 $rnd = md5(uniqid());
-                if (!file_exists($nsPath . '/' . $rnd) and @mkdir($nsPath . '/' . $rnd)) {
-                    $newDirs[] = $nsPath . '/' . $rnd;
-                    $pathObj = new PathOrganizer([
-                        'namespace' => $_namespace,
-                        'path' => $rnd,
-                    ]);
-                    if ($pathObj->save()) {
-                        $newFolders--;
+                if (!file_exists($nsPath . '/' . $rnd)) {
+                    if (@mkdir($nsPath . '/' . $rnd, 0777, true)) {
+                        $newDirs[] = $nsPath . '/' . $rnd;
+                        $pathObj = new PathOrganizer([
+                            'namespace' => $_namespace,
+                            'path' => $rnd,
+                        ]);
+                        if ($pathObj->save()) {
+                            $newFolders--;
+                        } else {
+                            $tryCnt--;
+                        }
                     } else {
                         $tryCnt--;
                     }
                 }
-
             }
 
             if ($newFolders == 0) {
