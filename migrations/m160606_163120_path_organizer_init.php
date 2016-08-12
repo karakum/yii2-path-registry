@@ -13,7 +13,11 @@ class m160606_163120_path_organizer_init extends Migration
      */
     protected function getPathManager()
     {
-        $pathManager = Yii::$app->pathManager;
+        try {
+            $pathManager = Yii::$app->pathManager;
+        } catch (Exception $e) {
+            throw new InvalidConfigException('pathManager instantiate error:' . $e->getMessage());
+        }
         if (!$pathManager instanceof PathManager) {
             throw new InvalidConfigException('You should configure "pathManager" component to use database before executing this migration.');
         }
