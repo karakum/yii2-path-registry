@@ -12,6 +12,7 @@ use RuntimeException;
 use Yii;
 use yii\base\Component;
 use yii\base\InvalidParamException;
+use yii\helpers\Url;
 
 
 /**
@@ -85,7 +86,7 @@ class PathManager extends Component
         $maxFiles = isset($ns['maxFiles']) ? $ns['maxFiles'] : $this->defaultMaxFiles;
         $newFolders = isset($ns['newFolders']) ? $ns['newFolders'] : $this->defaultNewFolders;
         $nsPath = Yii::getAlias($ns['path']);
-        $nsUrl = Yii::getAlias($ns['url']);
+        $nsUrl = $ns['url'];
 
         return [
             'maxFiles' => $maxFiles,
@@ -101,10 +102,28 @@ class PathManager extends Component
         return $ns['path'] . ($path ? '/' . $path : '');
     }
 
-    public function getBaseUrl($_namespace, $path = false)
+    public function getBaseUrl($_namespace, $path = false, $scheme = false)
     {
         $ns = $this->getStorage($_namespace);
-        return $ns['url'] . ($path ? '/' . $path : '');
+        if (is_array($ns['url'])) {
+            throw new RuntimeException("Requested namespace '$_namespace' has no direct link");
+        }
+        return Url::to($ns['url'] . ($path ? '/' . $path : ''), $scheme);
+    }
+
+    public function isDirectLink($_namespace)
+    {
+        $ns = $this->getStorage($_namespace);
+        return !is_array($ns['url']);
+    }
+
+    public function getUrl($_namespace, $path, $params, $scheme = false)
+    {
+        $ns = $this->getStorage($_namespace);
+        if (is_array($ns['url'])) {
+            return Url::to(array_merge($ns['url'], $params), $scheme);
+        }
+        return Url::to($ns['url'] . ($path ? '/' . $path : ''), $scheme);
     }
 
     public function getPath($_namespace)

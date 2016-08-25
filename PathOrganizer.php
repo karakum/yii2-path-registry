@@ -19,12 +19,21 @@ use yii\db\Expression;
  */
 class PathOrganizer extends ActiveRecord
 {
+
+    /**
+     * @return PathManager
+     */
+    private static function getPathManager()
+    {
+        return Yii::$app->pathManager;
+    }
+
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return Yii::$app->pathManager->pathTable;
+        return self::getPathManager()->pathTable;
     }
 
 
@@ -59,21 +68,21 @@ class PathOrganizer extends ActiveRecord
 
     public function getBasePath($name = false)
     {
-        return Yii::$app->pathManager->getBasePath($this->namespace) . ($name ? '/' . $name : '');
-    }
-
-    public function getBaseUrl($name = false)
-    {
-        return Yii::$app->pathManager->getBaseUrl($this->namespace) . ($name ? '/' . $name : '');
+        return self::getPathManager()->getBasePath($this->namespace) . ($name ? '/' . $name : '');
     }
 
     public function getFullPath($name = false)
     {
-        return Yii::$app->pathManager->getBasePath($this->namespace) . '/' . $this->path . ($name ? '/' . $name : '');
+        return self::getPathManager()->getBasePath($this->namespace) . '/' . $this->path . ($name ? '/' . $name : '');
     }
 
-    public function getUrl($name = false)
+    public function getUrl($file, $params, $scheme = false)
     {
-        return Yii::$app->pathManager->getBaseUrl($this->namespace) . '/' . $this->path . ($name ? '/' . $name : '');
+        $pm = self::getPathManager();
+        if ($pm->isDirectLink($this->namespace)) {
+            return $pm->getBaseUrl($this->namespace, $file, $scheme);
+        } else {
+            return $pm->getUrl($this->namespace, $file, $params, $scheme);
+        }
     }
 }

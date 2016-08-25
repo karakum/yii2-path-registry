@@ -41,11 +41,23 @@ Configure application component
             'namespaces' => [
                 'avatar' => [
                     'path' => '@webroot/uploads/avatar',
-                    'url' => '@web/uploads/avatar',
+                    'url' => '@web/uploads/avatar',      // Direct download link 
                     'maxFiles' => 100,
                     'newFolders' => 5
                 ],
+                'files' => [
+                    'path' => '@app/secure',
+                    'url' => ['file/download'],          // Through controller
+                ],
             ],
+        ],
+        'urlManager' => [
+            ...
+            'rules' => [
+                'download/<id:\d+>/<name>' =>'file/download',
+                ...
+            ],
+            ...
         ],
     ...
     ],
@@ -91,9 +103,25 @@ Once the extension is installed, simply use it in your code by  :
 ```php
 <?=
 
-$directory = Yii::$app->pathManager->getPath('avatar')->getFullPath();           //  '/var/www/yii2-app/web/uploads/avatar/7b08aea20ff07411b74b97ebe7fe6bf8'
-$filename = Yii::$app->pathManager->getPath('avatar')->getFullPath('photo.png'); //  '/var/www/yii2-app/web/uploads/avatar/7b08aea20ff07411b74b97ebe7fe6bf8/photo.png'
-$imgSrc = Yii::$app->pathManager->getPath('avatar')->getUrl('photo.png');        //  '/uploads/avatar/7b08aea20ff07411b74b97ebe7fe6bf8/photo.png'
+$avatarPath = Yii::$app->pathManager->getPath('avatar');
+$path = $avatarPath->getPath();                          			//  '7b08aea20ff07411b74b97ebe7fe6bf8'
+$directory = $avatarPath->getFullPath();                            //  '/var/www/yii2-app/web/uploads/avatar/7b08aea20ff07411b74b97ebe7fe6bf8'
+$filename = $avatarPath->getFullPath('photo.png');                  //  '/var/www/yii2-app/web/uploads/avatar/7b08aea20ff07411b74b97ebe7fe6bf8/photo.png'
+$file = $avatarPath->getPath('photo.png');                 			//  '7b08aea20ff07411b74b97ebe7fe6bf8/photo.png'
+$imgSrc = $avatarPath->getUrl($file, [                              //  'http://mysite.com/uploads/avatar/7b08aea20ff07411b74b97ebe7fe6bf8/photo.png'
+    'id' => 1,
+    'name' => 'Photo_name.png'
+]);
+
+$filesPath = Yii::$app->pathManager->getPath('files');
+$path = $filesPath->getPath();                          			//  '06524c83dc331625baeece8a8b4b5022'
+$directory = $filesPath->getFullPath();                             //  '/var/www/yii2-app/secure/06524c83dc331625baeece8a8b4b5022'
+$filename = $filesPath->getFullPath('secret.txt');      			//  '/var/www/yii2-app/secure/06524c83dc331625baeece8a8b4b5022/secret.txt'
+$file = $filesPath->getPath('secret.txt');              			//  '06524c83dc331625baeece8a8b4b5022/secret.txt'
+$fileUrl = $filesPath->getUrl($file, [                              //  'http://mysite.com/download/2/Secret_data.txt'
+    'id' => 2,
+    'name' => 'Secret_data.txt'
+]);
 
 ?>
 ```

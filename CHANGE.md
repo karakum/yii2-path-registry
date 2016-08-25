@@ -1,3 +1,13 @@
+version 0.4.0
+=============
+
+**Date:** 26-Aug-2016
+
+- Namespace can have url as array(like `['controller/action']`) to provide 
+  download through controller. Thereby now possible to upload to outside web 
+  root folder and then download more securely.
+- remove PathOrganizer:getBaseUrl() method.
+
 version 0.3.0
 =============
 
